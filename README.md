@@ -1,28 +1,39 @@
+
 # 初始設定
 
-## 安裝virtualenv
+## 安裝conda
+
+[Conda Download](https://www.anaconda.com/products/distribution)
+
+## 建立虛擬conda環境
 ```
-pip3 install virtualenv
-```
-## 建立虛擬pip環境
-```
-python3 -m venv .venv
+conda create -n python3.9 python=3.9
 ```
 
-## 進入虛擬環境並且安裝套件
-```source .venv/bin/activate```
-```pip install opencv-python``` 
+## 進入虛擬環境
+```
+conda activate python3.9
+```
+
+## 安裝套件指令
+```
+pip install [packagename]==[version]
+```
 
 ## 離開虛擬環境
 ```
-deactivate
+conda deactivate
 ```
 
 # 安裝過程問題
 ---
-**N/A**
-
 ---
 
 # 套件列表
-- opencv-python
+---
+opencv-python   4.6.0
+tensorflow      2.10.0
+pillow          9.2.0
+scipy           1.9.1
+tqdm            4.64.1
+---
