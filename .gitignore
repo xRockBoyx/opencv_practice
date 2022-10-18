@@ -1,3 +1,6 @@
 .venv/
 .DS_Store
 archive/
+Images/
+Images_Backups/
+Images.zip

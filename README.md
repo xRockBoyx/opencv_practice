@@ -36,4 +36,5 @@ tensorflow      2.10.0
 pillow          9.2.0
 scipy           1.9.1
 tqdm            4.64.1
+matplotlib      3.5.2
 ---
