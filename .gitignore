@@ -3,4 +3,7 @@
 archive/
 Images/
 Images_Backups/
-Images.zip
+Images_MFCC.zip
+Images_STFT.zip
+UrbanSound8K/
+UrbanSound8K.tar.gz

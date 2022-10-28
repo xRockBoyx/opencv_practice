@@ -94,7 +94,9 @@ model.compile(optimizer = 'adam',
 history = model.fit(train_images, train_labels, 
                     validation_data=(test_images, test_labels),
                     #verbose=2,callbacks=[earlyStop],
-                    batch_size=32, epochs=100)
+                    verbose = 2,
+                    batch_size=32, 
+                    epochs=100)
 model.save('Sound8k_10_Class_Epoch_100_Batch_32.h5')
 
 #----------輸出loss圖表-----------------

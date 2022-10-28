@@ -31,10 +31,10 @@ conda deactivate
 
 # 套件列表
 ---
-opencv-python   4.6.0
-tensorflow      2.10.0
-pillow          9.2.0
-scipy           1.9.1
-tqdm            4.64.1
-matplotlib      3.5.2
+opencv-python   4.6.0   <br>
+tensorflow      2.10.0  <br>
+pillow          9.2.0   <br>
+scipy           1.7.3   <br>
+tqdm            4.64.1  <br>
+matplotlib      3.5.2   <br>
 ---
