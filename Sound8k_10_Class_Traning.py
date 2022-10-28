@@ -9,6 +9,11 @@ from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
+gpus = tensorflow.config.experimental.list_physical_devices('GPU')
+
+for gpu in gpus:
+    tensorflow.config.experimental.set_memory_growth(gpu, True)
+
 def load_data():
     datasets = ['Images/training_set', 'Images/test_set']#資料夾
     output = []
