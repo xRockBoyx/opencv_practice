@@ -14,8 +14,6 @@ gpus = tensorflow.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
-tensorflow.config.experimental.set_virtual_device_configuration(gpus[0], [tensorflow.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
-
 
 def load_data():
     datasets = ['Images/training_set', 'Images/test_set']#資料夾
@@ -103,8 +101,8 @@ history = model.fit(train_images, train_labels,
                     validation_data=(test_images, test_labels),
                     #verbose=2,callbacks=[earlyStop],
                     verbose = 2,
-                    batch_size=2, 
-                    epochs=100)
+                    batch_size=16, 
+                    epochs=50)
 model.save('Sound8k_10_Class_Epoch_100_Batch_32.h5')
 
 #----------輸出loss圖表-----------------
