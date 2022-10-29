@@ -96,7 +96,7 @@ model.add(Dense(10, activation = 'softmax'))
 model.compile(optimizer = 'adam', 
               loss = 'sparse_categorical_crossentropy', 
               metrics = ['accuracy'])
-
+      
 history = model.fit(train_images, train_labels, 
                     validation_data=(test_images, test_labels),
                     #verbose=2,callbacks=[earlyStop],
