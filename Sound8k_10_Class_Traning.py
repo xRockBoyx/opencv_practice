@@ -10,6 +10,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
 gpus = tensorflow.config.experimental.list_physical_devices('GPU')
+IMAGE_SIZE = (256, 256)
 
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
@@ -74,7 +75,6 @@ class_names = ['dog_bark',
                'gun_shot']
 class_names_label = {class_name:i for i, class_name in enumerate(class_names)}
 nb_classes = len(class_names)
-IMAGE_SIZE = (256, 256)
 
 (train_images, train_labels), (test_images, test_labels) = load_data()
 train_images = train_images / 255.0 
