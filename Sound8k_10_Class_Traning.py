@@ -10,7 +10,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
 gpus = tensorflow.config.experimental.list_physical_devices('GPU')
-IMAGE_SIZE = (256, 256)
+IMAGE_SIZE = (128, 128)
 
 for gpu in gpus:
     tensorflow.config.experimental.set_memory_growth(gpu, True)
@@ -82,7 +82,7 @@ test_images = test_images / 255.0
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
+model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (128, 128, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
 model.add(Convolution2D(512 , 3, 3, padding = 'same', activation = 'relu'))
