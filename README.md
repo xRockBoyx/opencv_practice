@@ -32,6 +32,7 @@ conda deactivate
 # 套件列表
 ---
 opencv-python   4.6.0   <br>
+若是在Docker container 內，要裝opencv-python-headless <br>
 tensorflow      2.10.0  <br>
 pillow          9.2.0   <br>
 scipy           1.7.3   <br>
