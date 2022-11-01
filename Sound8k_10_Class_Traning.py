@@ -16,8 +16,7 @@ from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 # for gpu in gpus:
 #     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
-train_datagen = ImageDataGenerator(rescale = 1./255,
-                                   horizontal_flip = True)
+train_datagen = ImageDataGenerator(rescale = 1./255)
 test_datagen = ImageDataGenerator(rescale = 1./255)
 
 train_set = train_datagen.flow_from_directory('Images/training_set/',
