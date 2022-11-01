@@ -9,11 +9,11 @@ from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 
-gpus = tensorflow.config.experimental.list_physical_devices('GPU')
-IMAGE_SIZE = (128, 128)
+# gpus = tensorflow.config.experimental.list_physical_devices('GPU')
+IMAGE_SIZE = (256, 256)
 
-for gpu in gpus:
-    tensorflow.config.experimental.set_memory_growth(gpu, True)
+# for gpu in gpus:
+#     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
 
 def load_data():
@@ -82,7 +82,7 @@ test_images = test_images / 255.0
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (128, 128, 3), activation = 'relu'))
+model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
 model.add(Convolution2D(512 , 3, 3, padding = 'same', activation = 'relu'))
@@ -101,8 +101,8 @@ history = model.fit(train_images, train_labels,
                     validation_data=(test_images, test_labels),
                     #verbose=2,callbacks=[earlyStop],
                     verbose = 2,
-                    batch_size=1, 
-                    epochs=10)
+                    batch_size=32, 
+                    epochs=100)
 model.save('Sound8k_10_Class_Epoch_100_Batch_32.h5')
 
 #----------輸出loss圖表-----------------
