@@ -1,4 +1,3 @@
-from tabnanny import verbose
 import cv2, tensorflow, os, csv, shutil
 import numpy                as np
 import matplotlib.pyplot    as plt
@@ -16,17 +15,22 @@ from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 # for gpu in gpus:
 #     tensorflow.config.experimental.set_memory_growth(gpu, True)
 
-train_datagen = ImageDataGenerator(rescale = 1./255)
-test_datagen = ImageDataGenerator(rescale = 1./255)
+image_datagen = ImageDataGenerator(rescale = 1./255, 
+                                   validation_split = 0.2)
+# test_datagen = ImageDataGenerator(rescale = 1./255)
 
-train_set = train_datagen.flow_from_directory('Images/training_set/',
+train_set = image_datagen.flow_from_directory(  'Images/all_set/',
+                                                 shuffle = True,
                                                  target_size = (256, 256),
                                                  batch_size  = 32,
+                                                 subset="training",
                                                  class_mode  = 'categorical'
                                                  )
-test_set = test_datagen.flow_from_directory('Images/test_set/',
+test_set = image_datagen.flow_from_directory('Images/all_set/',
+                                             shuffle = True,
                                             target_size = (256, 256),
                                             batch_size  = 32,
+                                            subset="validation",
                                             class_mode  = 'categorical'
                                             )
 
@@ -50,10 +54,10 @@ test_set = test_datagen.flow_from_directory('Images/test_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(Convolution2D(128 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
+model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
-model.add(Convolution2D(256 , 3, 3, padding = 'same', activation = 'relu'))
+model.add(Convolution2D(512 , 3, 3, padding = 'same', activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
 model.add(Flatten())
@@ -70,7 +74,8 @@ history = model.fit(    train_set,
                         epochs = 100,
                         validation_data = test_set,
                         validation_steps = len(test_set),
-                        verbose = 2)
+                        verbose = 2
+                        )
 # history = model.fit(train_images, train_labels, 
 #                     validation_data=(test_images, test_labels),
 #                     #verbose=2,callbacks=[earlyStop],

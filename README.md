@@ -7,12 +7,12 @@
 
 ## 建立虛擬conda環境
 ```
-conda create -n python3.9 python=3.9
+conda create -n python3.7 python=3.7
 ```
 
 ## 進入虛擬環境
 ```
-conda activate python3.9
+conda activate python3.7
 ```
 
 ## 安裝套件指令
@@ -38,4 +38,5 @@ pillow          9.2.0   <br>
 scipy           1.7.3   <br>
 tqdm            4.64.1  <br>
 matplotlib      3.5.2   <br>
+line-bot-sdk
 ---
