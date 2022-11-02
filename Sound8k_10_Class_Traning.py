@@ -50,10 +50,10 @@ test_set = test_datagen.flow_from_directory('Images/test_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(Convolution2D(256 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
+model.add(Convolution2D(128 , 3, 3, padding = 'same', input_shape = (256, 256, 3), activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
-model.add(Convolution2D(512 , 3, 3, padding = 'same', activation = 'relu'))
+model.add(Convolution2D(256 , 3, 3, padding = 'same', activation = 'relu'))
 model.add(MaxPooling2D(pool_size  = (2,2)))
 model.add(Dropout(0.2))
 model.add(Flatten())
