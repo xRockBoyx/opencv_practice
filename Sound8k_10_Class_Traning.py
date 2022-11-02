@@ -77,7 +77,7 @@ history = model.fit(    train_set,
 #                     verbose = 2,
 #                     batch_size=32, 
 #                     epochs=100)
-model.save('Sound8k_10_Class_Epoch_100_Batch_32_STFT.h5')
+model.save('Sound8k_10_Class_Epoch_100_Batch_32_STFT_Filter128.h5')
 
 #----------輸出loss圖表-----------------
 plt.plot(history.history['loss'])
@@ -86,7 +86,7 @@ plt.title('train_loss')
 plt.ylabel('loss')
 plt.xlabel('Epoch')
 plt.legend(['train', 'val'], loc='upper right')
-plt.savefig('loss_STFT_no_argumentation.png')
+plt.savefig('loss_STFT_no_argumentation_filter128.png')
 plt.show()
 #------------------------------------
 plt.clf()
@@ -97,6 +97,6 @@ plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
-plt.savefig('Acc_STFT_no_argumentation.png')
+plt.savefig('Acc_STFT_no_argumentation_filter128.png')
 plt.show()
 #-----------------------------------
