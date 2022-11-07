@@ -63,7 +63,7 @@ model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dropout(0.2))
 model.add(Dense(128, activation = 'relu'))
-model.add(Dense(10, activation = 'softmax'))
+model.add(Dense(8, activation = 'softmax'))
 #-------------------------------
 model.compile(optimizer = 'adam', 
               loss = 'categorical_crossentropy', 
@@ -82,7 +82,7 @@ history = model.fit(    train_set,
 #                     verbose = 2,
 #                     batch_size=32, 
 #                     epochs=100)
-model.save('Sound8k_10_Class_Epoch_100_Batch_32_STFT_Filter128.h5')
+model.save('Sound8k_8_Class_Epoch_100_Batch_32_STFT_Filter128.h5')
 
 #----------輸出loss圖表-----------------
 plt.plot(history.history['loss'])
@@ -91,7 +91,7 @@ plt.title('train_loss')
 plt.ylabel('loss')
 plt.xlabel('Epoch')
 plt.legend(['train', 'val'], loc='upper right')
-plt.savefig('loss_STFT_no_argumentation_filter128.png')
+plt.savefig('loss_8_class_STFT_no_argumentation_filter128.png')
 plt.show()
 #------------------------------------
 plt.clf()
@@ -102,6 +102,6 @@ plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'val'], loc='upper left')
-plt.savefig('Acc_STFT_no_argumentation_filter128.png')
+plt.savefig('Acc_8_class_STFT_no_argumentation_filter128.png')
 plt.show()
 #-----------------------------------
