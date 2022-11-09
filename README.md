@@ -38,5 +38,5 @@ pillow          9.2.0   <br>
 scipy           1.7.3   <br>
 tqdm            4.64.1  <br>
 matplotlib      3.5.2   <br>
-line-bot-sdk
+google-cloud-storage
 ---
