@@ -21,7 +21,7 @@ Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiW
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
 
 #---------------傳送LINE通知----------------------
-Notifier.send_message(text = "\n訓練開始")
+Notifier.send_message(text = "\nResnet50訓練開始")
 #------------------------------------------------
 
 image_datagen = ImageDataGenerator(rescale = 1./255,
