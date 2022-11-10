@@ -12,27 +12,35 @@ from tensorflow.keras.layers                import Dropout
 from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Acc_8_class_STFT_no_argumentation_filter128.png'
-LOSS_IMAGE_FILE_NAME = 'loss_8_class_STFT_no_argumentation_filter128.png'
+ACC_IMAGE_FILE_NAME  = 'Acc_8_class_STFT_Epoch_100_batch16_filter128.png'
+LOSS_IMAGE_FILE_NAME = 'loss_8_class_STFT_Epoch_100_batch16_filter128.png'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
 
-image_datagen = ImageDataGenerator(rescale = 1./255, 
+#---------------傳送LINE通知----------------------
+Notifier.send_message(text = "\n訓練開始")
+#------------------------------------------------
+
+image_datagen = ImageDataGenerator(rescale = 1./255,
+                                   horizontal_flip=True,
+                                   rotation_range=20,
+                                   width_shift_range=0.2,
+                                   height_shift_range=0.2,
                                    validation_split = 0.2)
 # test_datagen = ImageDataGenerator(rescale = 1./255)
 
 train_set = image_datagen.flow_from_directory(  'Images/all_set/',
                                                  shuffle = True,
                                                  target_size = (256, 256),
-                                                 batch_size  = 32,
+                                                 batch_size  = 16,
                                                  subset="training",
                                                  class_mode  = 'categorical'
                                                  )
 test_set = image_datagen.flow_from_directory('Images/all_set/',
                                              shuffle = True,
                                             target_size = (256, 256),
-                                            batch_size  = 32,
+                                            batch_size  = 16,
                                             subset="validation",
                                             class_mode  = 'categorical'
                                             )
@@ -76,8 +84,7 @@ history = model.fit(    train_set,
                         steps_per_epoch = len(train_set),
                         epochs = 100,
                         validation_data = test_set,
-                        validation_steps = len(test_set),
-                        verbose = 2
+                        validation_steps = len(test_set)
                         )
 # history = model.fit(train_images, train_labels, 
 #                     validation_data=(test_images, test_labels),
@@ -85,7 +92,7 @@ history = model.fit(    train_set,
 #                     verbose = 2,
 #                     batch_size=32, 
 #                     epochs=100)
-model.save('Sound8k_8_Class_Epoch_100_Batch_32_STFT_Filter128.h5')
+model.save('Sound8k_8_Class_Epoch_100_Batch_16_STFT_Filter128.h5')
 
 #----------輸出loss圖表-----------------
 plt.plot(history.history['loss'])
@@ -111,18 +118,21 @@ plt.show()
 
 
 #----------傳送Line通知--------------
-localtime = time.asctime( time.localtime(time.time()) )
-Notifier.send_message(text = '訓練完成時間' + str(localtime))
-
 Notifier.upload_to_google_bucket(bucketName = BUCKET_NAME,
                                  bucketFileName = ACC_IMAGE_FILE_NAME,
                                  filePath = ACC_IMAGE_FILE_NAME)
-Notifier.send_image(text = "Accuracy",
-                    bucketFileName = ACC_IMAGE_FILE_NAME)
+Notifier.send_image(text = "\nTrain accuracy : " + 
+                            str(history.history['accuracy'][-1]) +
+                            "\nVal accuracy : " +
+                            str(history.history['val_accuracy'][-1]),
+                            bucketFileName = ACC_IMAGE_FILE_NAME)
 
 Notifier.upload_to_google_bucket(bucketName = BUCKET_NAME,
                                  bucketFileName = LOSS_IMAGE_FILE_NAME,
                                  filePath = LOSS_IMAGE_FILE_NAME)
-Notifier.send_image(text = "Loss",
-                    bucketFileName = LOSS_IMAGE_FILE_NAME)
+Notifier.send_image(text = "\nTrain loss : " +
+                            str(history.history['loss'][-1]) +
+                            "\nVal loss : " +
+                            str(history.history['val_loss'][-1]),
+                            bucketFileName = LOSS_IMAGE_FILE_NAME)
 #-------------------------------------
