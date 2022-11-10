@@ -12,12 +12,17 @@ from tensorflow.keras.layers                import Dense
 from tensorflow.keras.layers                import Dropout
 from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 
+
 BUCKET_NAME          = 'ai-training-notifier-bucket'
 ACC_IMAGE_FILE_NAME  = 'Resnet50_Acc_8_class_STFT_batch16.png'
 LOSS_IMAGE_FILE_NAME = 'Resnet50_loss_8_class_STFT_batch16.png'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
+
+#---------------傳送LINE通知----------------------
+Notifier.send_message(text = "\n訓練開始\n")
+#------------------------------------------------
 
 image_datagen = ImageDataGenerator(rescale = 1./255,
                                    horizontal_flip=True,
@@ -86,8 +91,6 @@ plt.show()
 
 
 #----------傳送Line通知--------------
-localtime = time.asctime( time.localtime(time.time()) )
-Notifier.send_message(text = "\n訓練完成時間\n" + str(localtime))
 
 Notifier.upload_to_google_bucket(bucketName = BUCKET_NAME,
                                  bucketFileName = ACC_IMAGE_FILE_NAME,
