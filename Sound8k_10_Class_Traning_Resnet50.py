@@ -51,8 +51,8 @@ test_set = image_datagen.flow_from_directory('Images/all_set/',
 model = Sequential()
 model.add(ResNet50V2(   include_top=False, 
                         pooling='avg', 
-                        weights='imagenet'),
-                        classifier_activation='softmax')
+                        weights='imagenet',
+                        classifier_activation='softmax'))
 model.add(Dense(8, activation='softmax'))
 model.summary()
 model.compile(optimizer = 'adam', 
