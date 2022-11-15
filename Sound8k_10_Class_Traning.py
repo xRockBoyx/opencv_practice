@@ -92,7 +92,7 @@ history = model.fit(    train_set,
 #                     verbose = 2,
 #                     batch_size=32, 
 #                     epochs=100)
-model.save('Sound8k_8_Class_Epoch_100_Batch_16_STFT_Filter128.h5')
+model.save('Sound8k_8_Class_Epoch_100_Batch16_STFT_Filter128.h5')
 
 #----------輸出loss圖表-----------------
 plt.plot(history.history['loss'])

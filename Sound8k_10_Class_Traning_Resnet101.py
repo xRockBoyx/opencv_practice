@@ -1,16 +1,16 @@
 import cv2, tensorflow, os, csv, shutil, time
 import numpy                as np
 import matplotlib.pyplot    as plt
-from tqdm                                    import tqdm
-from LineNotifyController                    import LineNotifier
-from tensorflow.keras.applications.resnet_v2 import ResNet50V2
-from tensorflow.keras.models                 import Sequential
-from tensorflow.keras.layers                 import Convolution2D
-from tensorflow.keras.layers                 import MaxPooling2D
-from tensorflow.keras.layers                 import Flatten
-from tensorflow.keras.layers                 import Dense
-from tensorflow.keras.layers                 import Dropout
-from tensorflow.keras.preprocessing.image    import ImageDataGenerator
+from tqdm                                   import tqdm
+from LineNotifyController                   import LineNotifier
+from tensorflow.keras.applications.resnet   import ResNet50
+from tensorflow.keras.models                import Sequential
+from tensorflow.keras.layers                import Convolution2D
+from tensorflow.keras.layers                import MaxPooling2D
+from tensorflow.keras.layers                import Flatten
+from tensorflow.keras.layers                import Dense
+from tensorflow.keras.layers                import Dropout
+from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
@@ -49,10 +49,9 @@ test_set = image_datagen.flow_from_directory('Images/all_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(ResNet50V2(   include_top=False, 
-                        pooling='avg', 
-                        weights='imagenet'),
-                        classifier_activation='softmax')
+model.add(ResNet50(include_top=False, 
+                   pooling='avg', 
+                   weights='imagenet'))
 model.add(Dense(8, activation='softmax'))
 model.summary()
 model.compile(optimizer = 'adam', 
