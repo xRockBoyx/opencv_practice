@@ -1,27 +1,27 @@
 import cv2, tensorflow, os, csv, shutil, time
 import numpy                as np
 import matplotlib.pyplot    as plt
-from tqdm                                   import tqdm
-from LineNotifyController                   import LineNotifier
-from tensorflow.keras.applications.resnet   import ResNet50
-from tensorflow.keras.models                import Sequential
-from tensorflow.keras.layers                import Convolution2D
-from tensorflow.keras.layers                import MaxPooling2D
-from tensorflow.keras.layers                import Flatten
-from tensorflow.keras.layers                import Dense
-from tensorflow.keras.layers                import Dropout
-from tensorflow.keras.preprocessing.image   import ImageDataGenerator
+from tqdm                                    import tqdm
+from LineNotifyController                    import LineNotifier
+from tensorflow.keras.applications.resnet_v2 import ResNet101V2
+from tensorflow.keras.models                 import Sequential
+from tensorflow.keras.layers                 import Convolution2D
+from tensorflow.keras.layers                 import MaxPooling2D
+from tensorflow.keras.layers                 import Flatten
+from tensorflow.keras.layers                 import Dense
+from tensorflow.keras.layers                 import Dropout
+from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Resnet50_Acc_8_class_STFT_batch16.png'
-LOSS_IMAGE_FILE_NAME = 'Resnet50_loss_8_class_STFT_batch16.png'
+ACC_IMAGE_FILE_NAME  = 'Resnet101V2_Acc_8_class_STFT_batch16.png'
+LOSS_IMAGE_FILE_NAME = 'Resnet101V2_loss_8_class_STFT_batch16.png'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
 
 #---------------傳送LINE通知----------------------
-Notifier.send_message(text = "\nResnet50訓練開始")
+Notifier.send_message(text = "\nResnet101V2訓練開始")
 #------------------------------------------------
 
 image_datagen = ImageDataGenerator(rescale = 1./255,
@@ -49,9 +49,10 @@ test_set = image_datagen.flow_from_directory('Images/all_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(ResNet50(include_top=False, 
-                   pooling='avg', 
-                   weights='imagenet'))
+model.add(ResNet101V2(  include_top=False, 
+                        pooling='avg', 
+                        weights='imagenet',
+                        classifier_activation='softmax'))
 model.add(Dense(8, activation='softmax'))
 model.summary()
 model.compile(optimizer = 'adam', 
@@ -64,7 +65,7 @@ history = model.fit(train_set,
                     epochs           = 100,
                     validation_steps = len(test_set))
 
-model.save('Resnet50_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5')
+model.save('Resnet101V2_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5')
 #-------------------------------
 
 #----------輸出loss圖表-----------------
