@@ -113,7 +113,7 @@ model.compile(loss='categorical_crossentropy',optimizer='sgd',metrics=['accuracy
 history = model.fit(train_set,
                     steps_per_epoch  = len(train_set),
                     validation_data  = test_set,
-                    epochs           = 100,
+                    epochs           = 200,
                     validation_steps = len(test_set))
 
 model.save(H5_WEIGHT_FILE_NAME)
