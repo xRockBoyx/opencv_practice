@@ -14,9 +14,9 @@ from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Resnet34_Acc_8_class_STFT_batch16.png'
-LOSS_IMAGE_FILE_NAME = 'Resnet34_loss_8_class_STFT_batch16.png'
-H5_WEIGHT_FILE_NAME  = 'Resnet34_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5'
+ACC_IMAGE_FILE_NAME  = 'Resnet34_Acc_8_class_STFT_batch16_epoch200.png'
+LOSS_IMAGE_FILE_NAME = 'Resnet34_loss_8_class_STFT_batch16_epoch200.png'
+H5_WEIGHT_FILE_NAME  = 'Resnet34_Sound8k_8_Class_Epoch_200_Batch_16_STFT.h5'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
