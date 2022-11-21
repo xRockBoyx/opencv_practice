@@ -16,6 +16,7 @@ from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 BUCKET_NAME          = 'ai-training-notifier-bucket'
 ACC_IMAGE_FILE_NAME  = 'VGG16_Acc_8_class_STFT_batch16.png'
 LOSS_IMAGE_FILE_NAME = 'VGG16_loss_8_class_STFT_batch16.png'
+H5_WEIGHT_FILE_NAME  = 'VGG16_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
@@ -52,21 +53,17 @@ model = Sequential()
 model.add(Convolution2D(input_shape=(256,256,3),filters=64,kernel_size=(3,3),padding="same", activation="relu"))
 model.add(Convolution2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"))
 model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
-model.add(Dropout(0.2))
 model.add(Convolution2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
-model.add(Dropout(0.2))
 model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
-model.add(Dropout(0.2))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
-model.add(Dropout(0.2))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
 model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
@@ -87,7 +84,7 @@ history = model.fit(train_set,
                     epochs           = 100,
                     validation_steps = len(test_set))
 
-model.save('Resnet50v2_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5')
+model.save(H5_WEIGHT_FILE_NAME)
 #-------------------------------
 
 #----------輸出loss圖表-----------------
