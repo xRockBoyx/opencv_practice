@@ -3,7 +3,7 @@ import numpy                as np
 import matplotlib.pyplot    as plt
 from tqdm                                    import tqdm
 from LineNotifyController                    import LineNotifier
-from tensorflow.keras.applications.resnet_v2 import ResNet50V2
+from tensorflow.keras.applications.vgg16     import VGG16
 from tensorflow.keras.models                 import Sequential
 from tensorflow.keras.layers                 import Convolution2D
 from tensorflow.keras.layers                 import MaxPooling2D
@@ -14,14 +14,14 @@ from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Resnet50v2_Acc_8_class_STFT_batch16.png'
-LOSS_IMAGE_FILE_NAME = 'Resnet50v2_loss_8_class_STFT_batch16.png'
+ACC_IMAGE_FILE_NAME  = 'VGG16_Acc_8_class_STFT_batch16.png'
+LOSS_IMAGE_FILE_NAME = 'VGG16_loss_8_class_STFT_batch16.png'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
 
 #---------------傳送LINE通知----------------------
-Notifier.send_message(text = "\nResnet50v2訓練開始")
+Notifier.send_message(text = "\nVGG16訓練開始")
 #------------------------------------------------
 
 image_datagen = ImageDataGenerator(rescale = 1./255,
@@ -49,11 +49,33 @@ test_set = image_datagen.flow_from_directory('Images/all_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(ResNet50V2(   include_top=False, 
-                        pooling='avg', 
-                        weights='imagenet',
-                        classifier_activation='softmax'))
-model.add(Dense(8, activation='softmax'))
+model.add(Convolution2D(input_shape=(256,256,3),filters=64,kernel_size=(3,3),padding="same", activation="relu"))
+model.add(Convolution2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Convolution2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(Convolution2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2),strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Flatten())
+model.add(Dense(units=4096,activation="relu"))
+model.add(Dense(units=4096,activation="relu"))
+model.add(Dense(units=8, activation="softmax"))
 model.summary()
 model.compile(optimizer = 'adam', 
               loss='categorical_crossentropy',
