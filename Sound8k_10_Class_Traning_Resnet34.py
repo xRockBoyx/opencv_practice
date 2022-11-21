@@ -65,6 +65,7 @@ def Conv2d_BN(x, nb_filter,kernel_size, strides=(1,1), padding='same',name=None)
                       activation='relu',
                       name=conv_name)(x)
     x = BatchNormalization(axis = 3,name = bn_name)(x)
+    return x
 
 def Conv_Block(inpt,nb_filter,kernel_size,strides=(1,1), with_conv_shortcut=False):
     x = Conv2d_BN(inpt,nb_filter=nb_filter,kernel_size=kernel_size,strides=strides,padding='same')
@@ -77,7 +78,7 @@ def Conv_Block(inpt,nb_filter,kernel_size,strides=(1,1), with_conv_shortcut=Fals
         x = add([x,inpt])
         return x
 
-inpt = Input(shape=(224,224,3))
+inpt = Input(shape=(256,256,3))
 x = ZeroPadding2D((3,3))(inpt)
 x = Conv2d_BN(x,nb_filter=64,kernel_size=(7,7),strides=(2,2),padding='valid')
 x = MaxPooling2D(pool_size=(3,3),strides=(2,2),padding='same')(x)
