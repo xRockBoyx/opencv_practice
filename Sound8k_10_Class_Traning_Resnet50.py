@@ -14,8 +14,8 @@ from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Resnet50v2_Acc_8_class_STFT_batch16.png'
-LOSS_IMAGE_FILE_NAME = 'Resnet50v2_loss_8_class_STFT_batch16.png'
+ACC_IMAGE_FILE_NAME  = 'Resnet50v2_Acc_8_class_STFT_batch16_input_224.png'
+LOSS_IMAGE_FILE_NAME = 'Resnet50v2_loss_8_class_STFT_batch16_input_224.png'
 H5_WEIGHT_FILE_NAME  = 'Resnet50v2_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
@@ -35,14 +35,14 @@ image_datagen = ImageDataGenerator(rescale = 1./255,
 
 train_set = image_datagen.flow_from_directory(  'Images/all_set/',
                                                  shuffle = True,
-                                                 target_size = (256, 256),
+                                                 target_size = (224, 224),
                                                  batch_size  = 16,
                                                  subset="training",
                                                  class_mode  = 'categorical'
                                                  )
 test_set = image_datagen.flow_from_directory('Images/all_set/',
                                              shuffle = True,
-                                            target_size = (256, 256),
+                                            target_size = (224, 224),
                                             batch_size  = 16,
                                             subset="validation",
                                             class_mode  = 'categorical'
@@ -50,7 +50,7 @@ test_set = image_datagen.flow_from_directory('Images/all_set/',
 
 #---------設定訓練網路-----------
 model = Sequential()
-model.add(ResNet50V2(   include_top=False, 
+model.add(ResNet50V2(   include_top=True, 
                         pooling='avg', 
                         weights='imagenet',
                         classifier_activation='softmax'))
