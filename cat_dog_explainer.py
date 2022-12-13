@@ -1,73 +1,81 @@
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Convolution2D
-from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.preprocessing import image
-import matplotlib.pyplot    as plt
-import tensorflow as tf
-import numpy as np
+# this is the code from https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
+from __future__ import print_function
+import keras
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras import backend as K
+
+batch_size = 128
+num_classes = 10
+epochs = 12
+
+# input image dimensions
+img_rows, img_cols = 28, 28
+
+# the data, split between train and test sets
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+if K.image_data_format() == 'channels_first':
+    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
+    input_shape = (1, img_rows, img_cols)
+else:
+    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
+    input_shape = (img_rows, img_cols, 1)
+
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+x_train /= 255
+x_test /= 255
+print('x_train shape:', x_train.shape)
+print(x_train.shape[0], 'train samples')
+print(x_test.shape[0], 'test samples')
+
+# convert class vectors to binary class matrices
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.to_categorical(y_test, num_classes)
+
+model = Sequential()
+model.add(Conv2D(32, kernel_size=(3, 3),
+                 activation='relu',
+                 input_shape=input_shape))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(num_classes, activation='softmax'))
+
+model.compile(loss=keras.losses.categorical_crossentropy,
+              optimizer=keras.optimizers.Adadelta(),
+              metrics=['accuracy'])
+
+model.fit(x_train, y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          verbose=1,
+          validation_data=(x_test, y_test))
+score = model.evaluate(x_test, y_test, verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
+
+# ...include code from https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
+
 import shap
+import numpy as np
 
-tf.compat.v1.disable_eager_execution()
+# select a set of background examples to take an expectation over
+background = x_train[np.random.choice(x_train.shape[0], 100, replace=False)]
 
-# model = Sequential()
-# model.add(Convolution2D(32 , 3, 3,  input_shape = (64, 64, 3), activation = 'relu'))
-# model.add(MaxPooling2D(pool_size  = (2,2)))
-# model.add(Flatten())
-# model.add(Dense(128, activation = 'relu'))
-# model.add(Dense(2, activation = 'softmax'))
+# explain predictions of the model on three images
+e = shap.DeepExplainer(model, background)
+# ...or pass tensors directly
+# e = shap.DeepExplainer((model.layers[0].input, model.layers[-1].output), background)
+shap_values = e.shap_values(x_test[1:5])
 
-# model.compile(optimizer = 'adam', 
-#               loss = 'binary_crossentropy', 
-#               metrics = ['accuracy'])
-
-# image_datagen = ImageDataGenerator(rescale = 1./255,
-#                                    horizontal_flip=True,
-#                                    rotation_range=20,
-#                                    width_shift_range=0.2,
-#                                    height_shift_range=0.2, 
-#                                    validation_split = 0.2)
-
-# train_set = image_datagen.flow_from_directory(  'shap_Image/',
-#                                                  shuffle = True,
-#                                                  target_size = (224, 224),
-#                                                  batch_size  = 16,
-#                                                  subset="training",
-#                                                  class_mode  = 'categorical'
-#                                                  )
-# test_set = image_datagen.flow_from_directory('shap_Image/',
-#                                              shuffle = True,
-#                                             target_size = (224, 224),
-#                                             batch_size  = 16,
-#                                             subset="validation",
-#                                             class_mode  = 'categorical'
-#                                             )
-
-model = load_model('cat_dog.h5')
-img = image.load_img('shap_image/Dog/9.jpg', target_size=(64, 64))
-img = np.expand_dims(img, axis=0) # 轉換通道
-img = img/255 # rescale
-
-
-pred = model.predict(img)
-print(pred)
-# x, y = test_set.next()
-
-# image = x[0]
-# label = y[0]
-
-# print(label)
-# print(test_set.classes[0])
-# print(test_set.filepaths[0])
-# plt.imshow(image)
-# model.fit(  train_set,
-#             steps_per_epoch = len(train_set),
-#             epochs = 1,
-#             validation_data = test_set,
-#             validation_steps = len(test_set))
-
-# model.save('cat_dog.h5')
-
+# plot the feature attributions
+shap.image_plot(shap_values, -x_test[1:5])
