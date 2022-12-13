@@ -3,6 +3,7 @@ __pycache__/
 .DS_Store
 archive/
 Images/
+shap_Image/
 Images_Backups/
 Images_MFCC.zip
 Images_STFT.zip

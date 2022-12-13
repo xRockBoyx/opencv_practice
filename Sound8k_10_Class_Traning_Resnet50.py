@@ -14,9 +14,9 @@ from tensorflow.keras.preprocessing.image    import ImageDataGenerator
 
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Resnet50v2_Acc_8_class_STFT_batch16_input_224.png'
-LOSS_IMAGE_FILE_NAME = 'Resnet50v2_loss_8_class_STFT_batch16_input_224.png'
-H5_WEIGHT_FILE_NAME  = 'Resnet50v2_Sound8k_8_Class_Epoch_100_Batch_16_STFT.h5'
+ACC_IMAGE_FILE_NAME  = 'Resnet50v2_Acc_Cat_Dog_batch16_input_224.png'
+LOSS_IMAGE_FILE_NAME = 'Resnet50v2_loss_Cat_Dog_batch16_input_224.png'
+H5_WEIGHT_FILE_NAME  = 'Resnet50v2_Cat_Dog_Epoch_100_Batch_16.h5'
 
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
@@ -33,14 +33,14 @@ image_datagen = ImageDataGenerator(rescale = 1./255,
                                    validation_split = 0.2)
 # test_datagen = ImageDataGenerator(rescale = 1./255)
 
-train_set = image_datagen.flow_from_directory(  'Images/all_set/',
+train_set = image_datagen.flow_from_directory(  'shap_Images/',
                                                  shuffle = True,
                                                  target_size = (224, 224),
                                                  batch_size  = 16,
                                                  subset="training",
                                                  class_mode  = 'categorical'
                                                  )
-test_set = image_datagen.flow_from_directory('Images/all_set/',
+test_set = image_datagen.flow_from_directory('shap_Images/',
                                              shuffle = True,
                                             target_size = (224, 224),
                                             batch_size  = 16,
@@ -54,7 +54,7 @@ model.add(ResNet50V2(   include_top=True,
                         pooling='avg', 
                         weights='imagenet',
                         classifier_activation='softmax'))
-model.add(Dense(8, activation='softmax'))
+model.add(Dense(2, activation='softmax'))
 model.summary()
 model.compile(optimizer = 'adam', 
               loss='categorical_crossentropy',
@@ -63,7 +63,7 @@ model.compile(optimizer = 'adam',
 history = model.fit(train_set,
                     steps_per_epoch  = len(train_set),
                     validation_data  = test_set,
-                    epochs           = 100,
+                    epochs           = 20,
                     validation_steps = len(test_set))
 
 model.save(H5_WEIGHT_FILE_NAME)
