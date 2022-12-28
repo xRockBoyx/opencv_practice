@@ -1,82 +1,85 @@
 # this is the code from https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
-from __future__ import print_function
-import keras
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras import backend as K
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras import backend as K
+import cv2
+import numpy as np
+import shap
+import json
 
-batch_size = 128
-num_classes = 10
-epochs = 12
+# tf.compat.v1.disable_v2_behavior()
 
-# input image dimensions
-img_rows, img_cols = 28, 28
+# url = "https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json"
+# with open(shap.datasets.cache(url)) as file:
+#     class_names = [v[1] for v in json.load(file).values()]
+# #print("Number of ImageNet classes:", len(class_names))
+# print("Class names:", class_names)
 
-# the data, split between train and test sets
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-if K.image_data_format() == 'channels_first':
-    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
-    input_shape = (1, img_rows, img_cols)
-else:
-    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-    input_shape = (img_rows, img_cols, 1)
+model = load_model('Resnet50v2_Cat_Dog_Epoch_100_Batch_16.h5')
+class_names = ['cat', 'dog']
+image = cv2.imread("archive/test_set/dogs/dog.4011.jpg")
+image1 = cv2.imread("archive/test_set/dogs/dog.4001.jpg")
+image2 = cv2.imread("archive/test_set/dogs/dog.4002.jpg")
+# print(image.shape)
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+image1 = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
+image2 = cv2.cvtColor(image2, cv2.COLOR_BGR2RGB)
+#cv讀照片，顏色莫認為BGR，需轉為RGB，錯誤表示黑白或已轉
+image = cv2.resize(image, (224, 224))
+image1 =  cv2.resize(image1, (224, 224))
+image2 =  cv2.resize(image2, (224, 224))
+image = np.expand_dims(image, axis = 0)
+image1 = np.expand_dims(image1, axis = 0)
+image2 = np.expand_dims(image2, axis = 0)
 
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255
-x_test /= 255
-print('x_train shape:', x_train.shape)
-print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
+n = np.concatenate([image, image1])
+n = np.concatenate([n, image2])
+print(n.shape)
+print(n[2].shape)
+n  = n / 255.0
 
-# convert class vectors to binary class matrices
-y_train = keras.utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+masker = shap.maskers.Image("inpaint_telea", n[0].shape)
+explainer = shap.Explainer(model, masker, output_names = class_names)
 
-model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3),
-                 activation='relu',
-                 input_shape=input_shape))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(num_classes, activation='softmax'))
 
-model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
-              metrics=['accuracy'])
+shap_values = explainer(n[0:1], 
+                        max_evals=200, 
+                        batch_size=30,
+                        outputs=shap.Explanation.argsort.flip[:2])
+# print(shap_values)
+print(np.argmax(model.predict(n), axis=1))
+print(model.predict(n))
+shap.image_plot(shap_values)
+# shap.image_plot(shap_values)
 
-model.fit(x_train, y_train,
-          batch_size=batch_size,
-          epochs=epochs,
-          verbose=1,
-          validation_data=(x_test, y_test))
-score = model.evaluate(x_test, y_test, verbose=0)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+# model = Sequential()
+# model.add(Conv2D(32, kernel_size=(3, 3),
+#                  activation='relu',
+#                  input_shape=input_shape))
+# model.add(Conv2D(64, (3, 3), activation='relu'))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Dropout(0.25))
+# model.add(Flatten())
+# model.add(Dense(128, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(num_classes, activation='softmax'))
 
-model.save('a.h5')
+# model.compile(loss=keras.losses.categorical_crossentropy,
+#               optimizer=keras.optimizers.Adadelta(),
+#               metrics=['accuracy'])
+
+# model.fit(x_train, y_train,
+#           batch_size=batch_size,
+#           epochs=epochs,
+#           verbose=1,
+#           validation_data=(x_test, y_test))
+# score = model.evaluate(x_test, y_test, verbose=0)
+# print('Test loss:', score[0])
+# print('Test accuracy:', score[1])
+
 # ...include code from https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
-
-# import shap
-# import numpy as np
-
-# # select a set of background examples to take an expectation over
-# background = x_train[np.random.choice(x_train.shape[0], 100, replace=False)]
-
-# # explain predictions of the model on three images
-# e = shap.DeepExplainer(model, background)
-# # ...or pass tensors directly
-# # e = shap.DeepExplainer((model.layers[0].input, model.layers[-1].output), background)
-# shap_values = e.shap_values(x_test[1:5])
-
-# # plot the feature attributions
-# shap.image_plot(shap_values, -x_test[1:5])
