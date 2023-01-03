@@ -12,9 +12,9 @@ from tensorflow.keras.layers                import Dropout
 from tensorflow.keras.preprocessing.image   import ImageDataGenerator
 
 BUCKET_NAME          = 'ai-training-notifier-bucket'
-ACC_IMAGE_FILE_NAME  = 'Acc_8_class_STFT_Epoch_100_batch16_filter128.png'
-LOSS_IMAGE_FILE_NAME = 'loss_8_class_STFT_Epoch_100_batch16_filter128.png'
-
+ACC_IMAGE_FILE_NAME  = 'Acc_cat_dog_STFT_Epoch_50_batch16_filter128.png'
+LOSS_IMAGE_FILE_NAME = 'loss_cat_dog_STFT_Epoch_50_batch16_filter128.png'
+H5_WEIGHT_FILE_NAME  = 'cat_dog_Epoch_100_Batch16_STFT_Filter128.h5'
 Notifier = LineNotifier(notifyToken               = '8sINtMZ1MjV2mOnnbIe0j6KTbiWtlfv6ilzgALwfUai',
                         privateApiKeyJsonFilePath = './line-notifier-image-storage-65936edbb18a.json')
 
@@ -30,14 +30,14 @@ image_datagen = ImageDataGenerator(rescale = 1./255,
                                    validation_split = 0.2)
 # test_datagen = ImageDataGenerator(rescale = 1./255)
 
-train_set = image_datagen.flow_from_directory(  'Images/all_set/',
+train_set = image_datagen.flow_from_directory(  'shap_Images/',
                                                  shuffle = True,
                                                  target_size = (256, 256),
                                                  batch_size  = 16,
                                                  subset="training",
                                                  class_mode  = 'categorical'
                                                  )
-test_set = image_datagen.flow_from_directory('Images/all_set/',
+test_set = image_datagen.flow_from_directory('shap_Images/',
                                              shuffle = True,
                                             target_size = (256, 256),
                                             batch_size  = 16,
@@ -74,7 +74,7 @@ model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dropout(0.2))
 model.add(Dense(128, activation = 'relu'))
-model.add(Dense(8, activation = 'softmax'))
+model.add(Dense(2, activation = 'softmax'))
 #-------------------------------
 model.compile(optimizer = 'adam', 
               loss = 'categorical_crossentropy', 
@@ -82,7 +82,7 @@ model.compile(optimizer = 'adam',
       
 history = model.fit(    train_set,
                         steps_per_epoch = len(train_set),
-                        epochs = 100,
+                        epochs = 50,
                         validation_data = test_set,
                         validation_steps = len(test_set)
                         )
@@ -92,7 +92,7 @@ history = model.fit(    train_set,
 #                     verbose = 2,
 #                     batch_size=32, 
 #                     epochs=100)
-model.save('Sound8k_8_Class_Epoch_100_Batch16_STFT_Filter128.h5')
+model.save(H5_WEIGHT_FILE_NAME)
 
 #----------輸出loss圖表-----------------
 plt.plot(history.history['loss'])
